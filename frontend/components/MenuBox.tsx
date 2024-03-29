@@ -6,14 +6,20 @@ import { MenuItem, menu } from "@/constants/items";
 const Menu = () => {
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleItemClick = async (itemName) => {
+  const handleItemClick = async ({
+    itemName,
+    itemId,
+  }: {
+    itemName: string;
+    itemId: number;
+  }) => {
     try {
       const response = await fetch("http://localhost:5000/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ itemName }),
+        body: JSON.stringify({ itemName, itemId }),
       });
 
       if (response.ok) {
@@ -40,8 +46,8 @@ const Menu = () => {
               selectedItem === item.name ? "bg-blue-200" : ""
             }`}
             onClick={() => {
-              setSelectedItem(item.name);
-              handleItemClick(item.name);
+              setSelectedItem(item?.name);
+              handleItemClick({ itemName: item?.name, itemId: item?.id });
             }}
           >
             <p className="w-1/6 text-center font-bold">{index + 1}</p>
