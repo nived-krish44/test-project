@@ -8,9 +8,9 @@ app.use(cors());
 app.post('/', (req, res) => {
   try {
     
-    const { itemName ,itemId} = req.body;
-    console.log("name " ,itemName);
-    console.log(itemId);
+    const data = req.body;
+    console.log(data);
+   // console.log(itemId);
 
     // Insert the item name into the database (uncomment and implement as needed)
     // const sql = 'INSERT INTO names (name) VALUES (?)';
@@ -24,7 +24,8 @@ app.post('/', (req, res) => {
       // Return a success response (uncomment and modify as needed)
       const response = {
         message: 'Received item name successfully and added to the database',
-        itemName: itemName
+        data:data
+        //itemName: itemName
       };
       res.status(200).json(response);
     // });
