@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');
+//const mysql = require('mysql');
 
 const app = express();
 app.use(express.json());
@@ -11,16 +11,16 @@ app.post('/', (req, res) => {
     
     const data = req.body;
     console.log(data);
-   console.log(itemId);
+   // console.log(itemId);
 
-    Insert the item name into the database (uncomment and implement as needed)
-    const sql = 'INSERT INTO names (name) VALUES (?)';
-    db.query(sql, [itemName], (err, result) => {
-      if (err) {
-        console.error('Error inserting item name:', err);
-        res.status(500).json({ error: 'Error processing item name' });
-        return;
-      }
+    // Insert the item name into the database (uncomment and implement as needed)
+    // const sql = 'INSERT INTO names (name) VALUES (?)';
+    // db.query(sql, [itemName], (err, result) => {
+    //   if (err) {
+    //     console.error('Error inserting item name:', err);
+    //     res.status(500).json({ error: 'Error processing item name' });
+    //     return;
+    //   }
       
       // Return a success response (uncomment and modify as needed)
       const response = {
@@ -29,7 +29,7 @@ app.post('/', (req, res) => {
         //itemName: itemName
       };
       res.status(200).json(response);
-    });
+    // });
   } catch (error) {
     console.error('Error processing request:', error);
     res.status(500).json({ error: 'Internal server error' });
