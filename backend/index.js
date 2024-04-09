@@ -1,42 +1,66 @@
 const express = require('express');
-const cors = require('cors');
-//const mysql = require('mysql');
-
+const bodyParser = require('body-parser');
+const session = require('express-session');
 const app = express();
-app.use(express.json());
-app.use(cors());
+app.use(express.json())
 
-app.post('/', (req, res) => {
-  try {
-    
-    const data = req.body;
-    console.log(data);
-   // console.log(itemId);
+// Middleware
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'mysecret', // Change this to a more secure secret in production
+    resave: false,
+    saveUninitialized: true
+}));
 
-    // Insert the item name into the database (uncomment and implement as needed)
-    // const sql = 'INSERT INTO names (name) VALUES (?)';
-    // db.query(sql, [itemName], (err, result) => {
-    //   if (err) {
-    //     console.error('Error inserting item name:', err);
-    //     res.status(500).json({ error: 'Error processing item name' });
-    //     return;
-    //   }
-      
-      // Return a success response (uncomment and modify as needed)
-      const response = {
-        message: 'Received item name successfully and added to the database',
-        data:data
-        //itemName: itemName
-      };
-      res.status(200).json(response);
-    // });
-  } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+// In-memory user database (for demonstration purposes)
+const users = [
+    { id: 1, username: 'admin', password: 'password', displayName: 'Administrator' }
+];
+
+// Middleware to check if user is logged in
+// const requireLogin = (req, res, next) => {
+//     if (!req.session.user) {
+//         return res.redirect('/login');
+//     }
+//     next();
+// };
+
+// Routes
+// app.get('/', requireLogin, (req, res) => {
+//     const user = req.session.user;
+//     res.send(user);
+// });
+
+app.get('/login', (req, res) => {
+    res.render('login');
 });
 
-const PORT = process.env.PORT || 5000; 
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const password= req.body.password;
+    console.log(username)
+    const user = users.find(u => u.username === username && u.password === password);
+    if (user) {
+       console.log(user)
+        req.session.user = user;
+       // res.redirect('/');
+        res.status(200).send('logged in');
+    } else {
+        res.send('invalid ');
+    }
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.send('Error logging out');
+        }
+        res.redirect('/login');
+    });
+});
+
+// Start the server
+const PORT = 5001;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
