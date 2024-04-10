@@ -2,7 +2,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
-app.use(express.json())
+const mysql = require('mysql2/promise');
+app.use(express.json());
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'menuorder',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
 
 // Middleware
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,19 +47,22 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
-app.post('/login', (req, res) => {
-    const username = req.body.username;
-    const password= req.body.password;
+app.post('/login',async (req, res) => {
+    try{
+    const { username, password } = req.body;
+    const [rows, fields] = await pool.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
     console.log(username)
-    const user = users.find(u => u.username === username && u.password === password);
-    if (user) {
-       console.log(user)
+    if (rows.length > 0) {
+        const user = rows[0];
         req.session.user = user;
-       // res.redirect('/');
-        res.status(200).send('logged in');
+        res.send("recieved");
     } else {
-        res.send('invalid ');
+        return res.send('Invalid credentials');
     }
+} catch (error) {
+    console.error('Error:', error);
+    return res.status(500).send('Internal Server Error');
+}
 });
 
 app.get('/logout', (req, res) => {
